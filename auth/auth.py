@@ -8,7 +8,7 @@ def create_user(username,password):
     cursor=conn.cursor()
     hashed_pass=hash_password(password)
     try:
-        cursor.execute("INSERT INTO users(username,password) VALUES(?,?)",
+        cursor.execute("INSERT INTO users(username,password) VALUES(%s,%s)",
                        (username,hashed_pass))
         conn.commit()
         return "Signup successful"
@@ -22,8 +22,13 @@ def login_user(username,password):
     cursor=conn.cursor()
 
     hashed_pass=hash_password(password)
-    cursor.execute("SELECT user_id FROM users WHERE username=? AND password=?",
-                   (username,hashed_pass))
+    try:
+        cursor.execute("SELECT user_id FROM users WHERE username=%s AND password=%s",
+                       (username, hashed_pass))
+    except Exception as e:
+        conn.rollback()
+        print(e)
+
     user=cursor.fetchone()
     conn.close()
     if user:
