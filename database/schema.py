@@ -1,16 +1,15 @@
-import sqlite3
-DB_NAME="leetcode.db"
+from database.db import get_connection
 def create_tables():
-    conn=sqlite3.connect(DB_NAME)
-    cursor=conn.cursor()
-    cursor.execute("""CREATE TABLE IF NOT EXISTS problems(problem_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""CREATE TABLE IF NOT EXISTS problems(problem_id SERIAL PRIMARY KEY ,
     title TEXT UNIQUE NOT NULL,
     difficulty TEXT NOT NULL,
     frequency REAL,
     acceptance_rate REAL,
     leetcode_link TEXT)
     """)
-    cursor.execute("""CREATE TABLE IF NOT EXISTS companies(company_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    cursor.execute("""CREATE TABLE IF NOT EXISTS companies(company_id SERIAL PRIMARY KEY ,
     name TEXT UNIQUE NOT NULL)
     """)
     cursor.execute("""CREATE TABLE IF NOT EXISTS problem_companies(
@@ -21,7 +20,7 @@ def create_tables():
     FOREIGN KEY(company_id) REFERENCES companies(company_id)
     )""")
     cursor.execute("""CREATE TABLE IF NOT EXISTS topics(
-    topic_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    topic_id SERIAL PRIMARY KEY ,
     name TEXT UNIQUE NOT NULL)
     """)
     cursor.execute("""CREATE TABLE IF NOT EXISTS problem_topics(
@@ -33,7 +32,7 @@ def create_tables():
     )
     """)
     cursor.execute("""CREATE TABLE IF NOT EXISTS users(
-    user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id SERIAL PRIMARY KEY ,
     username TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL)
     """)
