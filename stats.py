@@ -36,10 +36,3 @@ def get_all_topics():
     conn.close()
     return topics
 
-def filter_companies(query):
-    companies=get_all_companies()
-    if not query:
-        return companies[:10]
-    query=query.lower()
-    filtered=[company for company in companies if company.lower().startswith(query)]
-    return filtered
