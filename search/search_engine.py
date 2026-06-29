@@ -25,19 +25,19 @@ def search(company=None,topic=None,difficulty=None,limit=50,user_id=None,show_so
         AND p.problem_id NOT IN (
         SELECT problem_id
         FROM user_solved_problems
-        WHERE user_id=?)"""
+        WHERE user_id=%s)"""
         params.append(user_id)
     if company:
-        query+=" AND c.name = ?"
+        query+=" AND c.name = %s"
         params.append(company)
     if topic:
-        query+=" AND t.name= ?"
+        query+=" AND t.name= %s"
         params.append(topic)
     if difficulty:
-        query+=" AND p.difficulty= ?"
+        query+=" AND p.difficulty= %s"
         params.append(difficulty)
 
-    query+="""ORDER BY COALESCE(p.frequency,0) DESC LIMIT ?"""
+    query += """ ORDER BY p.frequency DESC NULLS LAST LIMIT %s """
     params.append(limit)
     cursor.execute(query,params)
     results=cursor.fetchall()
