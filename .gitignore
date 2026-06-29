@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+*.db
+.env
+
+
+.idea/
+.gradio/
+
+data/problems/
+guide
