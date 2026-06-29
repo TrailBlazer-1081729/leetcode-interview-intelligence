@@ -24,6 +24,7 @@ def ingest_data():
         print(f"Processing {company}")
         df=pd.read_csv(csv_path)
         for _,row in df.iterrows():
+            
             title=row["Title"]
             difficulty=row["Difficulty"]
             frequency=row["Frequency"]
@@ -48,30 +49,44 @@ def ingest_data():
     conn.close()
 
 def insert_company(cursor,company):
-    cursor.execute("""INSERT OR IGNORE INTO companies(name) values (?)""",(company,))
+
+    cursor.execute("""INSERT INTO companies(name)
+    VALUES (%s)
+    ON CONFLICT(name) DO NOTHING""",(company,))
 def insert_problem(cursor,title,difficulty,frequency,acceptance,link):
-    cursor.execute("""INSERT OR IGNORE INTO problems(title,difficulty,frequency,acceptance_rate,leetcode_link) VALUES(?,?,?,?,?)""",(title,difficulty,frequency,acceptance,link))
+
+    cursor.execute("""INSERT INTO problems(title,difficulty,frequency,acceptance_rate,leetcode_link) VALUES(%s,%s,%s,%s,%s) ON CONFLICT(title) DO NOTHING""",(title,difficulty,frequency,acceptance,link))
 
 def get_company_id(cursor,company):
-    cursor.execute("SELECT company_id FROM companies WHERE name=?",(company,))
+
+    cursor.execute("SELECT company_id FROM companies WHERE name=%s",(company,))
     return cursor.fetchone()[0]
 
 def get_problem_id(cursor,title):
-    cursor.execute("SELECT problem_id from problems WHERE title=?",(title,))
+
+    cursor.execute("SELECT problem_id from problems WHERE title=%s",(title,))
     return cursor.fetchone()[0]
 
 def insert_problem_company(cursor,problem_id,company_id):
-    cursor.execute("""INSERT OR IGNORE INTO problem_companies(problem_id,company_id) VALUES(?,?)""",(problem_id,company_id))
+
+    cursor.execute("""INSERT INTO problem_companies(problem_id,company_id) VALUES(%s,%s)
+ON CONFLICT(problem_id, company_id) DO NOTHING""",(problem_id,company_id))
 
 def insert_topic(cursor,topic):
-    cursor.execute("""INSERT OR IGNORE INTO topics(name) VALUES(?)""",(topic,))
+
+    cursor.execute("""INSERT INTO topics(name)
+VALUES(%s)
+ON CONFLICT(name) DO NOTHING""",(topic,))
 
 def get_topic_id(cursor,topic):
-    cursor.execute("SELECT topic_id from topics WHERE name=?",(topic,))
+
+    cursor.execute("SELECT topic_id from topics WHERE name=%s",(topic,))
     return cursor.fetchone()[0]
 
 def insert_problem_topic(cursor,problem_id,topic_id):
-    cursor.execute("""INSERT OR IGNORE INTO problem_topics(problem_id,topic_id) VALUES(?,?)""",(problem_id,topic_id))
+
+    cursor.execute("""INSERT INTO problem_topics(problem_id,topic_id) VALUES(%s,%s)
+    ON CONFLICT(problem_id, topic_id) DO NOTHING""",(problem_id,topic_id))
 
 
 ingest_data()
