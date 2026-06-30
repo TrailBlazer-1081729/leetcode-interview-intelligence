@@ -1,28 +1,24 @@
 import gradio as gr
 from stats import get_dashboard_stats,get_all_topics,get_all_companies
 from search.search_engine import search
-from tracker.progress import mark_solved, unmark_solved
+from tracker.progress import sync_solved_problems
 from auth.auth import create_user,login_user
 def clear_filters():
     return None,None,None,50,False
 
+
 def update_progress(selected_boxes, user_id, visible_problem_ids):
     if user_id is None:
         return "Please login first"
-
-    selected_ids = set()
-
-    for title in selected_boxes:
-        problem_id = visible_problem_ids[title]
-        selected_ids.add(problem_id)
-
-    for problem_id in visible_problem_ids.values():
-        if problem_id in selected_ids:
-            mark_solved(user_id, problem_id)
-        else:
-            unmark_solved(user_id, problem_id)
-
+    selected_ids = [
+        visible_problem_ids[title]
+        for title in selected_boxes
+    ]
+    visible_ids = list(visible_problem_ids.values())
+    sync_solved_problems(user_id, selected_ids, visible_ids)
     return "Progress updated successfully"
+
+
 
 def run_search(company, topic, difficulty, limits,user_id,show_solved):
     results,solved_ids = search(company, topic, difficulty, limits,user_id,show_solved)
@@ -133,7 +129,7 @@ with gr.Blocks() as demo:
             - Medium: {stats['medium']}
             - Hard: {stats['hard']}
             """)
-        stats = get_dashboard_stats()
+
         company_input = gr.Dropdown(choices=comp, label="Company")
 
         topic_dropdown = gr.Dropdown(choices=topics, label="Topic")
