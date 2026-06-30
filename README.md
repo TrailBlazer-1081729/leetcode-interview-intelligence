@@ -54,7 +54,7 @@ This is the **Version 1 (V1)** release focused on:
 ## Tech Stack
 
 - Python
-- SQLite
+- postgresql
 - Pandas
 - Gradio
 
@@ -177,26 +177,16 @@ Planned capabilities:
 
 ---
 
-## Installation
+## Note
 
-Clone repository:
+This project is still in progress, so the current files in this repository are incomplete and may not run properly if cloned.
 
-```bash
-git clone <repo-url>
-cd leetcode-interview-intelligence
-```
+If you want to test the current version, please use the live link below:
 
-Install dependencies:
+**Project Link:** https://huggingface.co/spaces/TrailBlazer108/leetcode-interview-intelligence
 
-```bash
-pip install -r requirements.txt
-```
+Full source code and setup instructions will be added once development is complete.
 
-Run application:
-
-```bash
-python app.py
-```
 
 ---
 
