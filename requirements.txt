@@ -1,2 +1,4 @@
 pandas
 gradio
+psycopg2-binary
+python-dotenv
