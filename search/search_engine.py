@@ -1,9 +1,11 @@
 
 from database.db import get_connection
-from tracker.progress import get_solved
+import time
 def search(company=None,topic=None,difficulty=None,limit=50,user_id=None,show_solved=False):
-    conn=get_connection()
-    cursor=conn.cursor()
+
+    conn = get_connection()
+
+    cursor = conn.cursor()
     query="""SELECT DISTINCT
     p.problem_id,
     p.title,
@@ -39,13 +41,27 @@ def search(company=None,topic=None,difficulty=None,limit=50,user_id=None,show_so
 
     query += """ ORDER BY p.frequency DESC NULLS LAST LIMIT %s """
     params.append(limit)
-    cursor.execute(query,params)
-    results=cursor.fetchall()
-    conn.close()
-    solved_ids = set()
 
+    cursor.execute(query, params)
+    results = cursor.fetchall()
+
+    solved_ids = set()
     if user_id:
-        solved_ids = get_solved(user_id)
+
+        try:
+            cursor.execute("""
+                SELECT problem_id
+                FROM user_solved_problems
+                WHERE user_id=%s
+            """, (user_id,))
+        except Exception as e:
+            conn.rollback()
+            print(e)
+
+        solved_ids = [row[0] for row in cursor.fetchall()]
+
+
+    conn.close()
 
     return results,solved_ids
 
